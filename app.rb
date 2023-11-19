@@ -3,7 +3,7 @@
 require 'pry'
 
 class MagicDigits
-  attr_reader :output_file
+  attr_reader :output_file_path
   attr_accessor :seed 
   
   def initialize
@@ -30,14 +30,13 @@ class MagicDigits
   private 
 
   def limit
-    # @limit ||= @seed * 10
-    @limit ||= @seed + 100
+    @limit ||= @seed * 10
   end
 
   def magic_number?(n)
     reduced = reduced_to_three_digits_or_less(n)
 
-    return true if reduced.to_s.split('').map { |e| e.to_i }.reduce(:+).odd? if has_base_magic_numbers? reduced
+    return true if summ_of_digits_is_idd?(n) if has_base_magic_numbers? reduced
       
     false
   end 
@@ -64,13 +63,18 @@ class MagicDigits
     n.to_s.split('').map { |e| e.to_i }.reduce(:+)
   end 
 
+  def summ_of_digits_is_odd?(n)
+    summ_of_digits(n).odd?
+  end
+
   def out_file_handler
     @out_file_handler ||= File.open(output_file_path, 'w')
   end 
 end 
 
 begin 
-  instance = MagicDigits.new.perform
+  instance = MagicDigits.new
+  instance.perform
 ensure 
   instance.close_output_file
 end 
